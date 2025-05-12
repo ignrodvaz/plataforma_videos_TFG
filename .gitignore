@@ -1,0 +1,26 @@
+# .gitignore
+
+# Node.js / React
+node_modules/
+dist/
+.env
+.vite/
+
+# Python / Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+.env
+db.sqlite3
+media/
+staticfiles/
+venv/
+.env.*
+
+# VS Code
+.vscode/
+
+video-uploader_accessKeys.csv
+
+plataforma_videos/
