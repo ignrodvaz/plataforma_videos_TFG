@@ -1,110 +1,127 @@
-import { get, useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 import { createVideo, deleteVideo, updateVideo, getVideo } from "../api/videos.api";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from 'react-hot-toast'
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export function VideosForm() {
-
-    const { register, handleSubmit, formState: { errors },
-        setValue
-    } = useForm();
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm();
     const navigate = useNavigate();
     const params = useParams();
-    // console.log(params);
 
-    // const onSubmit = handleSubmit(async data => {
-    //     // const file = data.videoFile[0];
-    //     // console.log("Archivo de video: ", file);
-    //     const res = await createVideo(data);
-    //     console.log(res);
-    // })
+    const [video, setVideo] = useState(null);
+    const [showDescription, setShowDescription] = useState(false);
 
     const onSubmit = handleSubmit(async data => {
-        //const file = data.videoFile[0]; // ❌ No lo necesitas ahora
         if (params.id) {
             await updateVideo(params.id, data)
             toast.success("Video editado correctamente");
         } else {
-            await createVideo(data); // data solo contiene title y description
+            await createVideo(data);
             toast.success("Video creado correctamente");
         }
-        navigate("/videos"); // Redirige a la página de videos después de crear el video
+        navigate("/videos");
     });
 
     useEffect(() => {
         async function loadVideo() {
             if (params.id) {
-
                 const res = await getVideo(params.id);
+                setVideo(res.data);
                 setValue("title", res.data.title);
                 setValue("description", res.data.description);
-
             }
         }
         loadVideo();
-    }, [])
-
+    }, []);
 
     return (
-        <div className="max-w-xl mx-auto mt-10 bg-zinc-900 p-6 rounded-xl shadow-lg text-white">
+        <div className="max-w-4xl mx-auto mt-10 p-6 bg-zinc-900 rounded-2xl shadow-lg text-white">
 
-            <form onSubmit={onSubmit} className="space-x-36">
+            {/* VIDEO PREVIEW SOLO AL EDITAR */}
+            {params.id && video?.file_url && (
+                <div className="mb-6">
+                    <video controls className="w-full rounded-xl">
+                        <source src={video.file_url} type="video/mp4" />
+                        Tu navegador no soporta este video.
+                    </video>
+                </div>
+            )}
 
-                {/* CAMPO TITULO */}
-                <input type="text" name="title" placeholder="Título"
+            {/* INFO DE VIDEO EN MODO DETALLE */}
+            {params.id && video && (
+                <div className="mb-6 px-2">
+                    <h2 className="text-xl font-semibold mb-1">{video.title}</h2>
+                    <div className="flex items-center gap-6 text-sm text-zinc-400 mb-3">
+                        <span>{video.views ?? 0} vistas</span>
+                        <span>{new Date(video.created_at).toLocaleDateString()}</span>
+                    </div>
+
+                    <button
+                        onClick={() => setShowDescription(!showDescription)}
+                        className="flex items-center gap-1 text-sm text-violet-400 hover:underline focus:outline-none"
+                    >
+                        {showDescription ? (
+                            <>
+                                <ChevronUp size={16} /> Mostrar menos
+                            </>
+                        ) : (
+                            <>
+                                <ChevronDown size={16} /> Mostrar más
+                            </>
+                        )}
+                    </button>
+
+                    {showDescription && (
+                        <p className="mt-3 text-sm text-zinc-300">{video.description}</p>
+                    )}
+                </div>
+            )}
+
+            {/* FORMULARIO DE EDICIÓN O CREACIÓN */}
+            <form onSubmit={onSubmit} className="space-y-4">
+
+                <input
+                    type="text"
+                    placeholder="Título"
                     {...register("title", { required: true })}
                     className="w-full p-3 bg-zinc-800 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
                 {errors.title && <span className="text-red-400 text-sm">El titulo es requerido</span>}
 
-                {/* CAMPO DESCRIPCION */}
-                <textarea name="description" placeholder="Descripción"
+                <textarea
+                    placeholder="Descripción"
                     {...register("description", { required: true })}
-                    className="w-full mt-4 p-3 bg-zinc-800 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full p-3 bg-zinc-800 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     rows="4"
                 />
-                {errors.description && <span className="text-red-400 text-sm">La descripcón es requerida</span>}
+                {errors.description && <span className="text-red-400 text-sm">La descripción es requerida</span>}
 
+                <button
+                    type="submit"
+                    className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 px-4 rounded-md transition-colors"
+                >
+                    {params.id ? "Actualizar" : "Subir"}
+                </button>
 
-                {/* ACTUALMENTE NO SUBE NINGUN VIDEO DEJA POR DEFECTO UN NOMBRE */}
-                {/* CAMPO VIDEO
-                Enlace vídeo:<input type="file" accept="video/*"
-                    {...register("videoFile", { required: true })} />
-                {errors.videoFile && <span>Este campo es requerido</span>} */}
-
-                {/* CAMPO CATEGORIAS */}
-                {/* <select name="categories" multiple>
-                    {categories.map(cat => (
-                        <option key={cat.category_id} value={cat.category_id}>{cat.name}</option>
-                    ))}
-                </select> */}
-
-                {/* CAMPO PUBLICO */}
-                {/* <label>
-                    <input type="checkbox" name="isPublic" /> Público
-                </label> */}
-
-                <button type="submit" className="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white py-2 px-4 rounded-md transition-colors"
-                >{params.id ? "Actualizar" : "Subir"} </button>
-
-                {
-                params.id && (
-                    <button onClick={async () => {
-                        const accepted = window.confirm("Estas seguro?")
-                        if (accepted) {
-                            await deleteVideo(params.id)
-                            toast.success("Video eliminado correctamente");
-                            navigate("/videos");
-                        }
-                    }} className="w-full mt-4 bg-red-600 hover:bg-red-500 text-white py-2 px-4 rounded-md transition-colors">Eliminar</button>
-                )
-            }
+                {params.id && (
+                    <button
+                        type="button"
+                        onClick={async () => {
+                            const accepted = window.confirm("¿Estás seguro de que quieres eliminar este video?");
+                            if (accepted) {
+                                await deleteVideo(params.id);
+                                toast.success("Video eliminado correctamente");
+                                navigate("/videos");
+                            }
+                        }}
+                        className="w-full bg-red-600 hover:bg-red-500 text-white py-2 px-4 rounded-md transition-colors"
+                    >
+                        Eliminar
+                    </button>
+                )}
             </form>
-
-            
-
-
         </div>
-    )
+    );
 }

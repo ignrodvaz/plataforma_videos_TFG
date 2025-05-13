@@ -15,6 +15,7 @@ export function VideosCard({ video }) {
       <div className="p-4">
         <h2 className="text-white font-semibold text-lg mb-1 truncate">{video.title}</h2>
         <p className="text-gray-400 text-sm mb-2 line-clamp-2">{video.description}</p>
+        {/* <p className="text-gray-400 text-sm mb-2 line-clamp-2">{video.user}</p> NECESITAMOS EL NOMBRE NO EL ID HAY QUE ARREGLARLO */}
         <div className="text-gray-500 text-xs">Views: {video.views}</div>
       </div>
     </div>

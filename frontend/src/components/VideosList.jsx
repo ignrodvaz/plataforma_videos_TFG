@@ -14,7 +14,7 @@ export function VideosList() {
     loadVideos()
   }, []);
 
-  return <div  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 bg-zinc-900 min-h-screen">
+  return <div  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 bg-zinc-850 min-h-screen">
     {videos.map(video => (
       <VideosCard video = {video} key={video.video_id} />
     ))}
