@@ -46,3 +46,7 @@ export const deleteVideo = (id) => {
 export const updateVideo = (id, video) => {
     return axios.put(`http://localhost:8000/api/videos/${id}/`, video)
 }
+
+export const addViewToVideo = (id) => {
+    return axios.post(`http://localhost:8000/api/videos/${id}/add-view/`);
+  };  

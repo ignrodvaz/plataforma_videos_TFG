@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
+from rest_framework.decorators import action
 import uuid
 
 # Create your views here.
@@ -62,3 +63,13 @@ class VideoViewSet(viewsets.ModelViewSet):
             serializer.save(file_url=file_url, user=default_user, duration=duration)
         else:
             serializer.save(user=default_user)
+
+    @action(detail=True, methods=['post'], url_path='add-view')
+    def add_view(self, request, pk=None):
+        video = self.get_object()
+        if video.views is None:
+            video.views = 1
+        else:
+            video.views += 1
+        video.save()
+        return Response({'status': 'view added', 'views': video.views}, status=status.HTTP_200_OK)

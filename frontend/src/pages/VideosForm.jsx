@@ -21,7 +21,7 @@ export function VideosForm() {
         } else {
             console.log(data); // Para ver qué se está enviando
             await createVideo(data); // Aquí createVideo construye el FormData
-            toast.success("Video creado correctamente");
+            toast.success("Video subido correctamente");
         }
         navigate("/videos");
     });
