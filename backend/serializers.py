@@ -15,12 +15,12 @@ class VideoSerializer(serializers.ModelSerializer):
             'user': {'required': False},
         }
     
-    def create(self, validated_data):
-        # Añadir valores temporales si no vienen
-        validated_data.setdefault('file_url', 'default.mp4')
-        validated_data.setdefault('thumbnail_url', 'default.jpg')
-        validated_data.setdefault('duration', 0.0)
-        validated_data.setdefault('user', User.objects.first())  # O un usuario de prueba
+    # def create(self, validated_data):
+    #     # Añadir valores temporales si no vienen
+    #     validated_data.setdefault('file_url', 'default.mp4')
+    #     validated_data.setdefault('thumbnail_url', 'default.jpg')
+    #     validated_data.setdefault('duration', 0.0)
+    #     validated_data.setdefault('user', User.objects.first())  # O un usuario de prueba
 
-        return super().create(validated_data)
+    #     return super().create(validated_data)
 

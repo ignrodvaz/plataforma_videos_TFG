@@ -15,10 +15,12 @@ export function VideosForm() {
 
     const onSubmit = handleSubmit(async data => {
         if (params.id) {
-            await updateVideo(params.id, data)
+            // También necesitarías adaptar updateVideo si usas FormData aquí
+            await updateVideo(params.id, data);
             toast.success("Video editado correctamente");
         } else {
-            await createVideo(data);
+            console.log(data); // Para ver qué se está enviando
+            await createVideo(data); // Aquí createVideo construye el FormData
             toast.success("Video creado correctamente");
         }
         navigate("/videos");
@@ -54,7 +56,7 @@ export function VideosForm() {
                 <div className="mb-6 px-2">
                     <h2 className="text-xl font-semibold mb-1">{video.title}</h2>
                     <div className="flex items-center gap-6 text-sm text-zinc-400 mb-3">
-                        <span>{video.views ?? 0} vistas</span>
+                        <span>{video.views ?? 0} Visualizaciones</span>
                         <span>{new Date(video.created_at).toLocaleDateString()}</span>
                     </div>
 
@@ -97,6 +99,15 @@ export function VideosForm() {
                     rows="4"
                 />
                 {errors.description && <span className="text-red-400 text-sm">La descripción es requerida</span>}
+
+                <input
+                    type="file"
+                    accept="video/*"
+                    {...register("videoFile", { required: true })}
+                    className="w-full mt-4 bg-zinc-800 text-white rounded-md p-2"
+                />
+                {errors.videoFile && <span className="text-red-400 text-sm">El video es requerido</span>}
+
 
                 <button
                     type="submit"

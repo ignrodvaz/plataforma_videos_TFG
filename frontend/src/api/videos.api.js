@@ -8,9 +8,36 @@ export const getVideo = (id) => {
     return axios.get(`http://localhost:8000/api/videos/${id}/`)
 }
 
+// export const createVideo = (video) => {
+//     const formData = new FormData();
+//     for (let key in video) {
+//         formData.append(key, video[key]);
+//     }
+
+//     return axios.post('http://localhost:8000/api/videos/', formData, {
+//         headers: {
+//             'Content-Type': 'multipart/form-data'
+//         }
+//     });
+// }
+
 export const createVideo = (video) => {
-    return  axios.post('http://localhost:8000/api/videos/', video)
-}
+    const formData = new FormData();
+    formData.append("title", video.title);
+    formData.append("description", video.description);
+
+    // Aquí aseguramos que se suba el archivo correcto
+    if (video.videoFile && video.videoFile.length > 0) {
+        formData.append("videoFile", video.videoFile[0]);
+    }
+
+    return axios.post('http://localhost:8000/api/videos/', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+};
+
 
 export const deleteVideo = (id) => {
     return axios.delete(`http://localhost:8000/api/videos/${id}/`)

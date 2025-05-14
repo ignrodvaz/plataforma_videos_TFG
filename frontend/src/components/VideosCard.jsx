@@ -8,7 +8,7 @@ export function VideosCard({ video }) {
       className="bg-zinc-800 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer overflow-hidden"
       onClick={() => navigate(`/videos/${video.video_id}`)}
     >
-      <video className="w-full h-48 object-cover" controls>
+      <video className="w-full h-55 object-cover" controls>
         <source src={video.file_url} type="video/mp4" />
         Tu navegador no soporta el video.
       </video>
@@ -16,7 +16,7 @@ export function VideosCard({ video }) {
         <h2 className="text-white font-semibold text-lg mb-1 truncate">{video.title}</h2>
         <p className="text-gray-400 text-sm mb-2 line-clamp-2">{video.description}</p>
         {/* <p className="text-gray-400 text-sm mb-2 line-clamp-2">{video.user}</p> NECESITAMOS EL NOMBRE NO EL ID HAY QUE ARREGLARLO */}
-        <div className="text-gray-500 text-xs">Views: {video.views}</div>
+        <div className="text-gray-500 text-xs">Visualizaciones: {video.views}</div>
       </div>
     </div>
   )
