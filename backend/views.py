@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from .models import Video, User
-from .serializers import VideoSerializer
+from .serializers import VideoSerializer, RegisterSerializer
 
 from moviepy import *
 import tempfile
@@ -73,3 +73,11 @@ class VideoViewSet(viewsets.ModelViewSet):
             video.views += 1
         video.save()
         return Response({'status': 'view added', 'views': video.views}, status=status.HTTP_200_OK)
+    
+@api_view(['POST'])
+def register_user(request):
+    serializer = RegisterSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Usuario creado correctamente"}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
