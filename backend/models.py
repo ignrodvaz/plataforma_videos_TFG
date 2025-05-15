@@ -5,6 +5,7 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
 
 
@@ -16,7 +17,6 @@ class Advertisement(models.Model):
     created_at = models.DateTimeField(db_column='CREATED_AT', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'ADVERTISEMENT'
 
     def __str__(self):
@@ -28,7 +28,6 @@ class Category(models.Model):
     name = models.CharField(db_column='NAME', unique=True, max_length=50)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'CATEGORY'
 
     def __str__(self):
@@ -43,7 +42,6 @@ class Comment(models.Model):
     created_at = models.DateTimeField(db_column='CREATED_AT', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'COMMENT'
 
     def __str__(self):
@@ -57,7 +55,6 @@ class Playlist(models.Model):
     created_at = models.DateTimeField(db_column='CREATED_AT', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'PLAYLIST'
 
     def __str__(self):
@@ -70,7 +67,6 @@ class PlaylistVideo(models.Model):
     video = models.ForeignKey('Video', models.DO_NOTHING, db_column='VIDEO_ID')  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'PLAYLIST_VIDEO'
 
     def __str__(self):
@@ -85,7 +81,6 @@ class Reaction(models.Model):
     created_at = models.DateTimeField(db_column='CREATED_AT', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'REACTION'
 
     def __str__(self):
@@ -102,7 +97,6 @@ class Report(models.Model):
     created_at = models.DateTimeField(db_column='CREATED_AT', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'REPORT'
 
     def __str__(self):
@@ -116,28 +110,68 @@ class Subscription(models.Model):
     created_at = models.DateTimeField(db_column='CREATED_AT', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'SUBSCRIPTION'
 
     def __str__(self):
         return f"Subscription {self.subscription_id} from {self.subscriber.username} to {self.channel.username}"
 
+class CustomUserManager(BaseUserManager):
+    def create_user(self, username, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("El email es obligatorio")
+        if not username:
+            raise ValueError("El username es obligatorio")
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-class User(models.Model):
-    user_id = models.AutoField(db_column='USER_ID', primary_key=True)  # Field name made lowercase.
-    username = models.CharField(db_column='USERNAME', unique=True, max_length=50)  # Field name made lowercase.
-    email = models.CharField(db_column='EMAIL', unique=True, max_length=100)  # Field name made lowercase.
-    password_hash = models.CharField(db_column='PASSWORD_HASH', max_length=255)  # Field name made lowercase.
-    profile_picture = models.CharField(db_column='PROFILE_PICTURE', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    is_active = models.BooleanField(db_column='IS_ACTIVE', blank=True, null=True)  # Field name made lowercase.
-    created_at = models.DateTimeField(db_column='CREATED_AT', blank=True, null=True)  # Field name made lowercase.
+    def create_superuser(self, username, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        if not username:
+            raise ValueError("El username es obligatorio para superuser")
+        return self.create_user(username, email, password, **extra_fields)
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    user_id = models.AutoField(primary_key=True)
+    username = models.CharField(max_length=50, unique=True)
+    email = models.EmailField(max_length=100, unique=True)
+    profile_picture = models.CharField(max_length=255, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    @property
+    def id(self):
+        return self.user_id
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ['username']
 
     class Meta:
-        managed = False
-        db_table = 'USER'
+        db_table = "USER"
 
-    def __str__(self):
-        return self.username
+# class User(models.Model):
+#     user_id = models.AutoField(db_column='USER_ID', primary_key=True)  # Field name made lowercase.
+#     username = models.CharField(db_column='USERNAME', unique=True, max_length=50)  # Field name made lowercase.
+#     email = models.CharField(db_column='EMAIL', unique=True, max_length=100)  # Field name made lowercase.
+#     password_hash = models.CharField(db_column='PASSWORD_HASH', max_length=255)  # Field name made lowercase.
+#     profile_picture = models.CharField(db_column='PROFILE_PICTURE', max_length=255, blank=True, null=True)  # Field name made lowercase.
+#     is_active = models.BooleanField(db_column='IS_ACTIVE', blank=True, null=True)  # Field name made lowercase.
+#     created_at = models.DateTimeField(db_column='CREATED_AT', blank=True, null=True)  # Field name made lowercase.
+
+#     class LegacyUser(models.Model):
+#         class Meta:
+#             managed = False
+#             db_table = 'USER'
+
+#     def __str__(self):
+#         return self.username
 
 
 class Video(models.Model):
@@ -153,7 +187,6 @@ class Video(models.Model):
     created_at = models.DateTimeField(db_column='CREATED_AT', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'VIDEO'
 
     def __str__(self):
@@ -166,7 +199,6 @@ class VideoCategory(models.Model):
     category = models.ForeignKey(Category, models.DO_NOTHING, db_column='CATEGORY_ID')  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'VIDEO_CATEGORY'
 
     def __str__(self):
@@ -180,7 +212,6 @@ class WatchHistory(models.Model):
     watched_at = models.DateTimeField(db_column='WATCHED_AT', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'WATCH_HISTORY'
 
     def __str__(self):

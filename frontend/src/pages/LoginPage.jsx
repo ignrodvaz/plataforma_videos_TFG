@@ -19,6 +19,8 @@ export function LoginPage() {
       localStorage.setItem("access", res.data.access)
       localStorage.setItem("refresh", res.data.refresh)
       navigate("/")
+      window.location.reload();
+
     } catch (err) {
       setError("Credenciales incorrectas")
     }
@@ -30,8 +32,8 @@ export function LoginPage() {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          name="username"
-          placeholder="Nombre de usuario"
+          name="email"
+          placeholder="Email"
           onChange={handleChange}
           className="w-full mb-4 p-2 rounded bg-zinc-700 text-white"
         />
