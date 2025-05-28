@@ -28,6 +28,7 @@ class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.all().order_by('video_id')
     serializer_class = VideoSerializer
     parser_classes = [MultiPartParser, FormParser]
+    # permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         file = self.request.FILES.get('videoFile')

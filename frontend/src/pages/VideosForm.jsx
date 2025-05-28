@@ -14,29 +14,51 @@ export function VideosForm() {
     const [showDescription, setShowDescription] = useState(false);
 
     const onSubmit = handleSubmit(async data => {
-        if (params.id) {
-            // También necesitarías adaptar updateVideo si usas FormData aquí
+        try {
+          if (params.id) {
             await updateVideo(params.id, data);
             toast.success("Video editado correctamente");
-        } else {
-            console.log(data); // Para ver qué se está enviando
-            await createVideo(data); // Aquí createVideo construye el FormData
+          } else {
+            await createVideo(data);
             toast.success("Video subido correctamente");
+          }
+          navigate("/videos");
+        } catch (error) {
+          toast.error("Error: no autorizado o problema en la subida");
+          console.error(error);
+          if (error.response?.status === 401) {
+            navigate("/login");
+          }
         }
-        navigate("/videos");
-    });
+      });
+      
 
     useEffect(() => {
+        const token = localStorage.getItem("access");
+        if (!token) {
+            navigate("/login");
+            return;
+        }
+    
         async function loadVideo() {
             if (params.id) {
-                const res = await getVideo(params.id);
-                setVideo(res.data);
-                setValue("title", res.data.title);
-                setValue("description", res.data.description);
+                try {
+                    const res = await getVideo(params.id);
+                    setVideo(res.data);
+                    setValue("title", res.data.title);
+                    setValue("description", res.data.description);
+                } catch (error) {
+                    console.error("Error al cargar el video:", error);
+                    if (error.response?.status === 401) {
+                        navigate("/login");
+                    }
+                }
             }
         }
+    
         loadVideo();
-    }, []);
+    }, [navigate, params.id, setValue]);
+    
 
     return (
         <div className="max-w-4xl mx-auto mt-10 p-6 bg-zinc-900 rounded-2xl shadow-lg text-white">
