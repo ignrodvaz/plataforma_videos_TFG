@@ -40,37 +40,37 @@ export const getVideo = (id) => {
 //     });
 // }
 
-// export const createVideo = (video) => {
-//     const formData = new FormData();
-//     formData.append("title", video.title);
-//     formData.append("description", video.description);
-
-//     // Aquí aseguramos que se suba el archivo correcto
-//     if (video.videoFile && video.videoFile.length > 0) {
-//         formData.append("videoFile", video.videoFile[0]);
-//     }
-
-//     return axios.post('http://localhost:8000/api/videos/', formData, {
-//         headers: {
-//             'Content-Type': 'multipart/form-data'
-//         }
-//     });
-// };
-
-export const createVideo = (videoData) => {
+export const createVideo = (video) => {
     const formData = new FormData();
-    formData.append("title", videoData.title);
-    formData.append("description", videoData.description);
-    formData.append("videoFile", videoData.videoFile[0]); // recuerda que es un array
-  
+    formData.append("title", video.title);
+    formData.append("description", video.description);
+
+    // Aquí aseguramos que se suba el archivo correcto
+    if (video.videoFile && video.videoFile.length > 0) {
+        formData.append("videoFile", video.videoFile[0]);
+    }
+
     return axios.post('http://localhost:8000/api/videos/', formData, {
-      ...getAuthHeaders(),
-      headers: {
-        ...getAuthHeaders().headers,
-        "Content-Type": "multipart/form-data"
-      }
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
     });
-  };
+};
+
+// export const createVideo = (videoData) => {
+//     const formData = new FormData();
+//     formData.append("title", videoData.title);
+//     formData.append("description", videoData.description);
+//     formData.append("videoFile", videoData.videoFile[0]); // recuerda que es un array
+  
+//     return axios.post('http://localhost:8000/api/videos/', formData, {
+//       ...getAuthHeaders(),
+//       headers: {
+//         ...getAuthHeaders().headers,
+//         "Content-Type": "multipart/form-data"
+//       }
+//     });
+//   };
 
 
 export const deleteVideo = (id) => {

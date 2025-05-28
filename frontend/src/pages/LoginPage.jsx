@@ -3,6 +3,7 @@ import { useState } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 
+
 export function LoginPage() {
   const navigate = useNavigate()
   const [form, setForm] = useState({ username: "", password: "" })
@@ -18,6 +19,12 @@ export function LoginPage() {
       const res = await axios.post("http://localhost:8000/api/token/", form)
       localStorage.setItem("access", res.data.access)
       localStorage.setItem("refresh", res.data.refresh)
+      const userRes = await axios.get("http://localhost:8000/api/user/", {
+        headers: {
+          Authorization: `Bearer ${res.data.access}`,
+        }
+      });
+      localStorage.setItem("userId", userRes.data.id);
       navigate("/")
       window.location.reload();
 

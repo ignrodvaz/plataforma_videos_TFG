@@ -3,6 +3,7 @@ import { LoginPage } from "./pages/LoginPage"
 import { RegisterPage } from "./pages/RegisterPage"
 import { VideosPage } from './pages/VideosPage'
 import { VideosForm } from './pages/VideosForm'
+import { VideosWatch } from './pages/VideosWatch'
 import { Navigation } from './components/Navigation'
 import { Toaster } from 'react-hot-toast'
 
@@ -16,6 +17,7 @@ function App() {
           <Route path='/videos' element={<VideosPage />} />
           <Route path='/videos-create' element={<VideosForm />} />
           <Route path='/videos/:id' element={<VideosForm />} />
+          <Route path='/videos-watch/:id' element={<VideosWatch />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
         </Routes>

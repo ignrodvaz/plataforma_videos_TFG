@@ -5,6 +5,7 @@ import { useState } from "react";
 export function VideosCard({ video }) {
   const navigate = useNavigate();
   const [views, setViews] = useState(video.views ?? 0);
+  const userId = localStorage.getItem("userId");
 
   const handleClick = async () => {
     try {
@@ -13,7 +14,11 @@ export function VideosCard({ video }) {
     } catch (error) {
       console.error("❌ Error al sumar visualización", error);
     } finally {
-      navigate(`/videos/${video.video_id}`);
+      if (String(video.user) === userId) {
+        navigate(`/videos/${video.video_id}`);
+      } else {
+        navigate(`/videos-watch/${video.video_id}`);
+      }
     }
   };
 
