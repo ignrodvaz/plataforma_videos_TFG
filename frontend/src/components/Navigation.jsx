@@ -34,7 +34,9 @@ export function Navigation() {
         navigate("/login");
     };
 
-    const isFormPage = location.pathname === "/videos-create" || /^\/videos\/\d+$/.test(location.pathname);
+    const isFormPage = location.pathname === "/videos-create" 
+    || /^\/videos\/\d+$/.test(location.pathname)
+    || /^\/videos-watch\/\d+$/.test(location.pathname);
 
     return (
         <nav className="bg-zinc-850 px-6 py-4 flex items-center justify-between">
