@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from .models import Video, User
 from .serializers import VideoSerializer, RegisterSerializer
 
@@ -28,7 +28,9 @@ class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.all().order_by('video_id')
     serializer_class = VideoSerializer
     parser_classes = [MultiPartParser, FormParser]
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title']
 
     def perform_create(self, serializer):
         file = self.request.FILES.get('videoFile')

@@ -10,32 +10,32 @@ export function Navigation() {
 
     useEffect(() => {
         const token = localStorage.getItem("access");
-    
+
         if (!token) {
             setUser(null);
             setLoading(false);
             return;
         }
-    
+
         axios.get("http://localhost:8000/api/user/", {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         })
-        .then((res) => setUser(res.data))
-        .catch((err) => {
-            console.error("Error al obtener usuario:", err);
-    
-            // Si hay error de autenticación, limpiar estado y redirigir
-            if (err.response?.status === 401) {
-                localStorage.removeItem("access");
-                setUser(null);
-                navigate("/login");
-            }
-        })
-        .finally(() => setLoading(false));
+            .then((res) => setUser(res.data))
+            .catch((err) => {
+                console.error("Error al obtener usuario:", err);
+
+                // Si hay error de autenticación, limpiar estado y redirigir
+                if (err.response?.status === 401) {
+                    localStorage.removeItem("access");
+                    setUser(null);
+                    navigate("/login");
+                }
+            })
+            .finally(() => setLoading(false));
     }, [navigate]);
-    
+
 
     const handleLogout = () => {
         localStorage.removeItem("access");
@@ -56,7 +56,7 @@ export function Navigation() {
 
             <nav className="bg-zinc-850 px-6 py-4 flex items-center justify-between">
                 <Link className="text-white text-2xl font-bold tracking-wide hover:text-violet-400 transition-colors">
-                    Video App
+                    Educativa
                 </Link>
             </nav>
 
@@ -64,7 +64,7 @@ export function Navigation() {
 
             <nav className="bg-zinc-850 px-6 py-4 flex items-center justify-between">
                 <Link to={"/videos"} className="text-white text-2xl font-bold tracking-wide hover:text-violet-400 transition-colors">
-                    Video App
+                    Educativa
                 </Link>
 
                 <div className="flex items-center gap-6">

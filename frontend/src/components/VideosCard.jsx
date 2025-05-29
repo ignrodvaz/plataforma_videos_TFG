@@ -24,7 +24,7 @@ export function VideosCard({ video }) {
 
   return (
     <div
-      className="bg-zinc-800 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer overflow-hidden"
+      className="bg-zinc-800 h-85 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer overflow-hidden"
       onClick={handleClick}
     >
       <video className="w-full h-55 object-cover" controls>
