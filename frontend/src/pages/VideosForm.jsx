@@ -10,28 +10,34 @@ export function VideosForm() {
     const navigate = useNavigate();
     const params = useParams();
 
+    const [isUploading, setIsUploading] = useState(false);
     const [video, setVideo] = useState(null);
     const [showDescription, setShowDescription] = useState(false);
 
     const onSubmit = handleSubmit(async data => {
+        if(isUploading) return;
+        setIsUploading(true);
+
         try {
-          if (params.id) {
-            await updateVideo(params.id, data);
-            toast.success("Video editado correctamente");
-          } else {
-            await createVideo(data);
-            toast.success("Video subido correctamente");
-          }
-          navigate("/videos");
+            if (params.id) {
+                await updateVideo(params.id, data);
+                toast.success("Video editado correctamente");
+            } else {
+                await createVideo(data);
+                toast.success("Video subido correctamente");
+            }
+            navigate("/videos");
         } catch (error) {
-          toast.error("Error: no autorizado o problema en la subida");
-          console.error(error);
-          if (error.response?.status === 401) {
-            navigate("/login");
-          }
+            toast.error("Error: no autorizado o problema en la subida");
+            console.error(error);
+            if (error.response?.status === 401) {
+                navigate("/login");
+            }
+        } finally {
+            setIsUploading(false);
         }
-      });
-      
+    });
+
 
     useEffect(() => {
         const token = localStorage.getItem("access");
@@ -39,7 +45,7 @@ export function VideosForm() {
             navigate("/login");
             return;
         }
-    
+
         async function loadVideo() {
             if (params.id) {
                 try {
@@ -55,10 +61,10 @@ export function VideosForm() {
                 }
             }
         }
-    
+
         loadVideo();
     }, [navigate, params.id, setValue]);
-    
+
 
     return (
         <div className="max-w-4xl mx-auto mt-10 p-6 bg-zinc-900 rounded-2xl shadow-lg text-white">
@@ -133,10 +139,15 @@ export function VideosForm() {
 
                 <button
                     type="submit"
-                    className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 px-4 rounded-md transition-colors"
+                    disabled={isUploading}
+                    className={`w-full text-white py-2 px-4 rounded-md transition-colors ${isUploading
+                            ? "bg-indigo-400 cursor-not-allowed"
+                            : "bg-indigo-600 hover:bg-indigo-500"
+                        }`}
                 >
-                    {params.id ? "Actualizar" : "Subir"}
+                    {isUploading ? "Subiendo..." : params.id ? "Actualizar" : "Subir"}
                 </button>
+
 
                 {params.id && (
                     <button

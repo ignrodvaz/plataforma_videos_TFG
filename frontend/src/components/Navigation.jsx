@@ -10,11 +10,13 @@ export function Navigation() {
 
     useEffect(() => {
         const token = localStorage.getItem("access");
+    
         if (!token) {
+            setUser(null);
             setLoading(false);
             return;
         }
-
+    
         axios.get("http://localhost:8000/api/user/", {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -23,10 +25,17 @@ export function Navigation() {
         .then((res) => setUser(res.data))
         .catch((err) => {
             console.error("Error al obtener usuario:", err);
-            // No hacemos setUser(null) para evitar logout automático
+    
+            // Si hay error de autenticación, limpiar estado y redirigir
+            if (err.response?.status === 401) {
+                localStorage.removeItem("access");
+                setUser(null);
+                navigate("/login");
+            }
         })
         .finally(() => setLoading(false));
-    }, []);
+    }, [navigate]);
+    
 
     const handleLogout = () => {
         localStorage.removeItem("access");
@@ -34,50 +43,66 @@ export function Navigation() {
         navigate("/login");
     };
 
-    const isFormPage = location.pathname === "/videos-create" 
-    || /^\/videos\/\d+$/.test(location.pathname)
-    || /^\/videos-watch\/\d+$/.test(location.pathname);
+
+    const isFormPage = location.pathname === "/videos-create"
+        || /^\/videos\/\d+$/.test(location.pathname)
+        || /^\/videos-watch\/\d+$/.test(location.pathname);
+
+    const isLoginPage = location.pathname === "/login";
+
 
     return (
-        <nav className="bg-zinc-850 px-6 py-4 flex items-center justify-between">
-            <Link to={"/videos"} className="text-white text-2xl font-bold tracking-wide hover:text-violet-400 transition-colors">
-                Video App
-            </Link>
+        isLoginPage ? (
 
-            <div className="flex items-center gap-6">
-                {!loading && (
-                    user ? (
-                        <>
-                            <span className="text-white font-semibold">👤 {user.username}</span>
-                            <button
-                                onClick={handleLogout}
-                                className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-500 transition-colors shadow-md"
-                            >
-                                Cerrar sesión
-                            </button>
-                        </>
+            <nav className="bg-zinc-850 px-6 py-4 flex items-center justify-between">
+                <Link className="text-white text-2xl font-bold tracking-wide hover:text-violet-400 transition-colors">
+                    Video App
+                </Link>
+            </nav>
+
+        ) : (
+
+            <nav className="bg-zinc-850 px-6 py-4 flex items-center justify-between">
+                <Link to={"/videos"} className="text-white text-2xl font-bold tracking-wide hover:text-violet-400 transition-colors">
+                    Video App
+                </Link>
+
+                <div className="flex items-center gap-6">
+                    {!loading && (
+                        user ? (
+                            <>
+                                <Link to={"/perfil"} className="text-white font-semibold">👤 {user.username}</Link>
+                                <button
+                                    onClick={handleLogout}
+                                    className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-500 transition-colors shadow-md cursor-pointer"
+                                >
+                                    Cerrar sesión
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <Link to={"/login"} className="text-white hover:text-green-400 transition-colors">
+                                    Login
+                                </Link>
+                                <Link to={"/register"} className="text-white hover:text-blue-400 transition-colors">
+                                    Register
+                                </Link>
+                            </>
+                        )
+                    )}
+
+                    {isFormPage ? (
+                        <Link to="/videos" className="bg-gray-700 text-white px-4 py-2 rounded-xl hover:bg-gray-600 transition-colors shadow-md">
+                            Volver
+                        </Link>
                     ) : (
-                        <>
-                            <Link to={"/login"} className="text-white hover:text-green-400 transition-colors">
-                                Login
-                            </Link>
-                            <Link to={"/register"} className="text-white hover:text-blue-400 transition-colors">
-                                Register
-                            </Link>
-                        </>
-                    )
-                )}
+                        <Link to="/videos-create" className="bg-violet-600 text-white px-4 py-2 rounded-xl hover:bg-violet-500 transition-colors shadow-md">
+                            Crear Video
+                        </Link>
+                    )}
+                </div>
+            </nav>
 
-                {isFormPage ? (
-                    <Link to="/videos" className="bg-gray-700 text-white px-4 py-2 rounded-xl hover:bg-gray-600 transition-colors shadow-md">
-                        Volver
-                    </Link>
-                ) : (
-                    <Link to="/videos-create" className="bg-violet-600 text-white px-4 py-2 rounded-xl hover:bg-violet-500 transition-colors shadow-md">
-                        Crear Video
-                    </Link>
-                )}
-            </div>
-        </nav>
+        )
     );
 }

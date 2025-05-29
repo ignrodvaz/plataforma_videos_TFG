@@ -6,6 +6,8 @@ import { VideosForm } from './pages/VideosForm'
 import { VideosWatch } from './pages/VideosWatch'
 import { Navigation } from './components/Navigation'
 import { Toaster } from 'react-hot-toast'
+import { User } from 'lucide-react'
+import UserProfile from './components/UserProfile'
 
 function App() {
   return (
@@ -20,6 +22,7 @@ function App() {
           <Route path='/videos-watch/:id' element={<VideosWatch />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path='/perfil' element={<UserProfile />} />
         </Routes>
         <Toaster
           position="top-right"

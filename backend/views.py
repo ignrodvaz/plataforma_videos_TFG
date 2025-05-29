@@ -95,3 +95,43 @@ def current_user(request):
         "username": user.username,
         "email": user.email,
     })
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def listar_videos_usuario(request):
+    usuario = request.user
+    videos = Video.objects.filter(user=usuario)
+    serializer = VideoSerializer(videos, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def cambiar_email(request):
+    nuevo_email = request.data.get('email')
+    if nuevo_email:
+        request.user.email = nuevo_email
+        request.user.save()
+        return Response({'message': 'Email actualizado correctamente'})
+    return Response({'error': 'Email inválido'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def cambiar_contrasena(request):
+    old_password = request.data.get('old_password')
+    new_password = request.data.get('new_password')
+
+    if not request.user.check_password(old_password):
+        return Response({'error': 'Contraseña actual incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
+
+    request.user.set_password(new_password)
+    request.user.save()
+    return Response({'message': 'Contraseña actualizada correctamente'})
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def eliminar_cuenta(request):
+    request.user.delete()
+    return Response({'message': 'Cuenta eliminada correctamente'})
