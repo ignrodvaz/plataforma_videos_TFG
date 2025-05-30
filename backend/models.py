@@ -184,7 +184,7 @@ class Video(models.Model):
     views = models.IntegerField(db_column='VIEWS', blank=True, null=True)  # Field name made lowercase.
     duration = models.FloatField(db_column='DURATION')  # Field name made lowercase.
     is_public = models.BooleanField(db_column='IS_PUBLIC', blank=True, null=True)  # Field name made lowercase.
-    created_at = models.DateTimeField(db_column='CREATED_AT', blank=True, null=True)  # Field name made lowercase.
+    created_at = models.DateTimeField(db_column='CREATED_AT', auto_now_add=True)  # Field name made lowercase.
 
     class Meta:
         db_table = 'VIDEO'
