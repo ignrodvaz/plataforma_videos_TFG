@@ -48,7 +48,8 @@ export function Navigation() {
         || /^\/videos\/\d+$/.test(location.pathname)
         || /^\/videos-watch\/\d+$/.test(location.pathname);
 
-    const isLoginPage = location.pathname === "/login";
+    const isLoginPage = location.pathname === "/login"
+        || location.pathname === "/register";
 
 
     return (
@@ -56,7 +57,11 @@ export function Navigation() {
 
             <nav className="bg-zinc-850 px-6 py-4 flex items-center justify-between">
                 <Link className="text-white text-2xl font-bold tracking-wide hover:text-violet-400 transition-colors">
-                    Educativa
+                    <img
+                        src="../../public/LogoEducativa.png"
+                        alt="Logo Educativa"
+                        className="w-30 h-30"
+                    />
                 </Link>
             </nav>
 
@@ -64,7 +69,11 @@ export function Navigation() {
 
             <nav className="bg-zinc-850 px-6 py-4 flex items-center justify-between">
                 <Link to={"/videos"} className="text-white text-2xl font-bold tracking-wide hover:text-violet-400 transition-colors">
-                    Educativa
+                    <img
+                        src="../../public/LogoEducativa.png"
+                        alt="Logo Educativa"
+                        className="w-30 h-30"
+                    />
                 </Link>
 
                 <div className="flex items-center gap-6">

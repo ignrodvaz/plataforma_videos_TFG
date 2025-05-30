@@ -33,6 +33,10 @@ export function LoginPage() {
     }
   }
 
+  const handleRegisterRedirect = () => {
+    navigate("/register")
+  }
+
   return (
     <div className="max-w-md mx-auto mt-10 bg-zinc-800 p-6 rounded-lg shadow-lg">
       <h1 className="text-white text-2xl font-bold mb-6 text-center">Iniciar Sesión</h1>
@@ -56,6 +60,12 @@ export function LoginPage() {
         </button>
         {error && <p className="text-red-400 mt-2">{error}</p>}
       </form>
+      <p className="mt-4 text-white">¿No tienes cuenta?</p>
+      <button
+        onClick={handleRegisterRedirect}
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
+        Registrarse
+      </button>
     </div>
   )
 }
